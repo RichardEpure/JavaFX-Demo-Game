@@ -12,14 +12,12 @@ public class Level extends ViewManager
     private int rows;
     private int columns;
     private ArrayList<ImageView> collidableElements;
+    private Player player;
 
     private boolean isLeftKeyPressed;
     private boolean isRightKeyPressed;
     private boolean isUpKeyPressed;
     private boolean isDownKeyPressed;
-
-    private Rectangle player;
-    private Rectangle ghostPlayer;
 
     public Level(int width, int height, int rows, int columns)
     {
@@ -42,22 +40,20 @@ public class Level extends ViewManager
 
     private void test()
     {
-        player = new Rectangle(25, 25, Color.RED);
+        player = new Player();
         player.setLayoutX(WIDTH/2);
         player.setLayoutY(HEIGHT/2);
-        pane.getChildren().add(player);
-
-        ghostPlayer = new Rectangle(25, 25, Color.RED);
-        ghostPlayer.setLayoutX(WIDTH/2);
-        ghostPlayer.setLayoutY(HEIGHT/2);
-        ghostPlayer.setVisible(false);
-        pane.getChildren().add(ghostPlayer);
+        player.addToPane(pane);
 
         addElement(ELEMENT.NORTHWALL, 0, 0, 2);
         addElement(ELEMENT.FLOOR, 2, 0, 2);
         addElement(ELEMENT.FLOOR, 4, 0, 2);
+        addElement(ELEMENT.SOUTHWALL, 6, 3, 2);
+        addElement(ELEMENT.SOUTHWALL, 6, 5, 2);
+        addElement(ELEMENT.SIDEWALL, 4,5, 2 );
 
-        player.toFront();
+        player.getCollisionBox().toFront();
+        player.getSprite().toFront();
     }
 
     // Method that initiates a loop which cycles every frame.
@@ -70,26 +66,24 @@ public class Level extends ViewManager
             {
                 if(isColliding())
                 {
-                    ghostPlayer.setLayoutY(player.getLayoutY());
-                    ghostPlayer.setLayoutX(player.getLayoutX());
+                    player.collide();
                 }
                 else
                 {
-                    player.setLayoutX(ghostPlayer.getLayoutX());
-                    player.setLayoutY(ghostPlayer.getLayoutY());
-                    playerMovement();
+                    player.move();
+                    playerColBoxMovement();
                 }
             }
         };
         timer.start();
     }
 
-    // Checks whether the player is about to collide with anything.
+    // Checks whether the playerColBox is about to collide with anything.
     private boolean isColliding()
     {
         for(int i=0; i<collidableElements.size(); i++)
         {
-            if(ghostPlayer.getBoundsInParent().intersects(collidableElements.get(i).getBoundsInParent()))
+            if(player.getCollisionBox().getBoundsInParent().intersects(collidableElements.get(i).getBoundsInParent()))
             {
                 return true;
             }
@@ -97,24 +91,24 @@ public class Level extends ViewManager
         return false;
     }
 
-    // Method that handles player movement.
-    private void playerMovement()
+    // Method that handles playerColBox movement.
+    private void playerColBoxMovement()
     {
         if(isLeftKeyPressed && !isRightKeyPressed)
         {
-            ghostPlayer.setLayoutX(ghostPlayer.getLayoutX()-3);
+            player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()-3);
         }
         if(isRightKeyPressed && !isLeftKeyPressed)
         {
-            ghostPlayer.setLayoutX(ghostPlayer.getLayoutX()+3);
+            player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()+3);
         }
         if(isUpKeyPressed && !isDownKeyPressed)
         {
-            ghostPlayer.setLayoutY(ghostPlayer.getLayoutY()-3);
+            player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()-3);
         }
         if(isDownKeyPressed && !isUpKeyPressed)
         {
-            ghostPlayer.setLayoutY(ghostPlayer.getLayoutY()+3);
+            player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()+3);
         }
     }
 

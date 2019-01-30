@@ -1,3 +1,5 @@
+import javafx.scene.shape.Rectangle;
+
 public enum ELEMENT
 {
     FLOOR("resources/tiles/RockyFloor.png", false),
@@ -6,6 +8,7 @@ public enum ELEMENT
     SIDEWALL("resources/tiles/RockyWall(Up).png", true);
 
     private String image;
+    private Rectangle collisionBox;
     private boolean collidable;
 
     ELEMENT(String image, boolean collidable)
