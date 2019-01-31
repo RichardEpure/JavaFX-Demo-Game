@@ -1,20 +1,19 @@
-import javafx.scene.shape.Rectangle;
-
 public enum ELEMENT
 {
-    FLOOR("resources/tiles/RockyFloor.png", false),
-    NORTHWALL("resources/tiles/RockyWall(Horizontal).png", true),
-    SOUTHWALL("resources/tiles/RockyWall(Horizontal-Hidden).png", true),
-    SIDEWALL("resources/tiles/RockyWall(Up).png", true);
+    FLOOR("resources/tiles/RockyFloor.png", false, 100),
+    NORTHWALL("resources/tiles/RockyWall(Horizontal).png", true, 100),
+    SOUTHWALL("resources/tiles/RockyWall(Horizontal-Hidden).png", true, 0),
+    SIDEWALL("resources/tiles/RockyWall(Up).png", true, 0);
 
     private String image;
-    private Rectangle collisionBox;
     private boolean collidable;
+    private int viewOrder;
 
-    ELEMENT(String image, boolean collidable)
+    ELEMENT(String image, boolean collidable, int viewOrder)
     {
         this.image = image;
         this.collidable = collidable;
+        this.viewOrder = viewOrder;
     }
 
     public String getImage()
@@ -25,5 +24,10 @@ public enum ELEMENT
     public boolean isCollidable()
     {
         return this.collidable;
+    }
+
+    public int getViewOrder()
+    {
+        return viewOrder;
     }
 }

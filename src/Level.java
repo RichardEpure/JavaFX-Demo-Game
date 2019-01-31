@@ -11,7 +11,7 @@ public class Level extends ViewManager
 {
     private int rows;
     private int columns;
-    private ArrayList<ImageView> collidableElements;
+    private ArrayList<Rectangle> collidableElements;
     private Player player;
 
     private boolean isLeftKeyPressed;
@@ -43,6 +43,7 @@ public class Level extends ViewManager
         player = new Player();
         player.setLayoutX(WIDTH/2);
         player.setLayoutY(HEIGHT/2);
+        player.getSprite().setViewOrder(1);
         player.addToPane(pane);
 
         addElement(ELEMENT.NORTHWALL, 0, 0, 2);
@@ -51,9 +52,7 @@ public class Level extends ViewManager
         addElement(ELEMENT.SOUTHWALL, 6, 3, 2);
         addElement(ELEMENT.SOUTHWALL, 6, 5, 2);
         addElement(ELEMENT.SIDEWALL, 4,5, 2 );
-
-        player.getCollisionBox().toFront();
-        player.getSprite().toFront();
+        addElement(ELEMENT.NORTHWALL, 8, 3, 2);
     }
 
     // Method that initiates a loop which cycles every frame.
@@ -62,7 +61,7 @@ public class Level extends ViewManager
         AnimationTimer timer = new AnimationTimer()
         {
             @Override
-            public void handle(long l)
+            public void handle(long elapsedTime)
             {
                 if(isColliding())
                 {
@@ -71,7 +70,7 @@ public class Level extends ViewManager
                 else
                 {
                     player.move();
-                    playerColBoxMovement();
+                    playerMovement();
                 }
             }
         };
@@ -91,28 +90,58 @@ public class Level extends ViewManager
         return false;
     }
 
-    // Method that handles playerColBox movement.
-    private void playerColBoxMovement()
+    // Method that handles player movement and corresponding animations.
+    private void playerMovement()
     {
         if(isLeftKeyPressed && !isRightKeyPressed)
         {
-            player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()-3);
+            player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()-player.getSpeed());
+            if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_LEFT_WALK) { player.setAnimation(ANIMATIONS.PLAYER_LEFT_WALK); }
         }
         if(isRightKeyPressed && !isLeftKeyPressed)
         {
-            player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()+3);
+            player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()+player.getSpeed());
+            if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_RIGHT_WALK) { player.setAnimation(ANIMATIONS.PLAYER_RIGHT_WALK); }
         }
         if(isUpKeyPressed && !isDownKeyPressed)
         {
-            player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()-3);
+            player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()-player.getSpeed());
+            if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_UP_WALK) { player.setAnimation(ANIMATIONS.PLAYER_UP_WALK); }
         }
         if(isDownKeyPressed && !isUpKeyPressed)
         {
-            player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()+3);
+            player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()+player.getSpeed());
+            if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_DOWN_WALK) { player.setAnimation(ANIMATIONS.PLAYER_DOWN_WALK); }
+        }
+        if( (isDownKeyPressed && isUpKeyPressed) || (isLeftKeyPressed && isRightKeyPressed) )
+        {
+            switch(player.getCurrentAnimation())
+            {
+                case PLAYER_LEFT_IDLE:
+                case PLAYER_LEFT_WALK:
+                    player.setAnimation(ANIMATIONS.PLAYER_LEFT_IDLE);
+                    break;
+
+                case PLAYER_RIGHT_IDLE:
+                case PLAYER_RIGHT_WALK:
+                    player.setAnimation(ANIMATIONS.PLAYER_RIGHT_IDLE);
+                    break;
+
+                case PLAYER_UP_IDLE:
+                case PLAYER_UP_WALK:
+                    player.setAnimation(ANIMATIONS.PLAYER_UP_IDLE);
+                    break;
+
+                case PLAYER_DOWN_IDLE:
+                case PLAYER_DOWN_WALK:
+                default:
+                    player.setAnimation(ANIMATIONS.PLAYER_DOWN_IDLE);
+                    break;
+            }
         }
     }
 
-    // Adds a new node to the panel using grid-based logic.
+    // Adds a new node representing a tile to the panel using grid-based logic.
     private void addElement(ELEMENT element, int row, int col)
     {
         addElement(element, row, col, 1);
@@ -125,8 +154,32 @@ public class Level extends ViewManager
         image.layoutXProperty().bind(pane.widthProperty().divide(columns).multiply(col));
         image.fitHeightProperty().bind(pane.heightProperty().divide(rows/span));
         image.fitWidthProperty().bind(pane.widthProperty().divide(columns/span));
-        if(element.isCollidable()) { collidableElements.add(image); }
-        pane.getChildren().add(image);
+        image.setViewOrder(element.getViewOrder());
+        if(element.isCollidable())
+        {
+            Rectangle collisionBox = new Rectangle(0,0, Color.RED);
+            switch(element)
+            {
+                case SOUTHWALL:
+                    int sizeFactor = 10;
+                    collisionBox.layoutYProperty().bind(pane.heightProperty().divide(rows).multiply(row).add(sizeFactor));
+                    collisionBox.layoutXProperty().bind(pane.widthProperty().divide(columns).multiply(col));
+                    collisionBox.heightProperty().bind(pane.heightProperty().divide(rows/span).subtract(sizeFactor));
+                    collisionBox.widthProperty().bind(pane.widthProperty().divide(columns/span));
+                    break;
+
+                default:
+                    collisionBox.layoutYProperty().bind(pane.heightProperty().divide(rows).multiply(row));
+                    collisionBox.layoutXProperty().bind(pane.widthProperty().divide(columns).multiply(col));
+                    collisionBox.heightProperty().bind(pane.heightProperty().divide(rows/span));
+                    collisionBox.widthProperty().bind(pane.widthProperty().divide(columns/span));
+                    break;
+            }
+            collisionBox.setVisible(false);
+            collidableElements.add(collisionBox);
+            pane.getChildren().add(collisionBox);
+        }
+        pane.getChildren().addAll(image);
     }
 
     // Keyboard input listeners.
@@ -164,18 +217,34 @@ public class Level extends ViewManager
             {
                 case LEFT:
                     isLeftKeyPressed = false;
+                    if(!isDownKeyPressed && !isRightKeyPressed && !isUpKeyPressed)
+                    {
+                        player.setAnimation(ANIMATIONS.PLAYER_LEFT_IDLE);
+                    }
                     break;
 
                 case RIGHT:
                     isRightKeyPressed = false;
+                    if(!isLeftKeyPressed && !isDownKeyPressed && !isUpKeyPressed)
+                    {
+                        player.setAnimation(ANIMATIONS.PLAYER_RIGHT_IDLE);
+                    }
                     break;
 
                 case UP:
                     isUpKeyPressed = false;
+                    if(!isDownKeyPressed && !isLeftKeyPressed && !isRightKeyPressed)
+                    {
+                        player.setAnimation(ANIMATIONS.PLAYER_UP_IDLE);
+                    }
                     break;
 
                 case DOWN:
                     isDownKeyPressed = false;
+                    if(!isLeftKeyPressed && !isRightKeyPressed && !isUpKeyPressed)
+                    {
+                        player.setAnimation(ANIMATIONS.PLAYER_DOWN_IDLE);
+                    }
                     break;
             }
         });

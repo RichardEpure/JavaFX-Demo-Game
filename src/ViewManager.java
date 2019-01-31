@@ -7,7 +7,6 @@ public abstract class ViewManager
     protected Pane pane;
     protected Scene scene;
     protected Stage stage;
-
     protected int WIDTH;
     protected int HEIGHT;
 
@@ -15,7 +14,6 @@ public abstract class ViewManager
     {
         this.WIDTH = width;
         this.HEIGHT = height;
-
         this.pane = new Pane();
         this.scene = new Scene(pane, WIDTH, HEIGHT);
         this.stage = new Stage();
