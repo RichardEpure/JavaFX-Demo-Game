@@ -20,14 +20,14 @@ public class Player
         this.oldPos = new double[2];
         this.currentAnimation = ANIMATIONS.PLAYER_DOWN_IDLE;
         this.sprite = new ImageView(new Image(currentAnimation.cycleFrame()));
-        this.speed = 1.5;
+        this.speed = 3;
         setSpriteSize(30);
         animationLoop();
     }
 
     private void animationLoop()
     {
-        AnimationTimer timer = new AnimationTimer()
+        AnimationTimer loop = new AnimationTimer()
         {
             private long prevElapsedTime = 0;
             private double timer1 = 0;
@@ -47,12 +47,13 @@ public class Player
                 timer1 += deltaTime;
 
                 // Looped instructions
+                // Continuously cycle between animation frames at constant intervals.
                 if(timer1 >= 0.15)
                 {
                     sprite.setImage(new Image(animation.cycleFrame()));
                     timer1=0;
                 }
-
+                // If player animation was changed, ignore timer and switch to new animation.
                 if(currentAnimation != animation)
                 {
                     animation = currentAnimation;
@@ -60,7 +61,7 @@ public class Player
                 }
             }
         };
-        timer.start();
+        loop.start();
     }
 
     // Sets which animation set the player will display.
@@ -86,44 +87,33 @@ public class Player
         collisionBox.setLayoutY(y);
     }
 
-    // Move collision box outside of the object it collided with.
+    // Move collision box to its position before any collision occurred.
     public void collide()
     {
-        if((collisionBox.getLayoutY() - oldPos[1]) < 0)
-        {
-            collisionBox.setLayoutY(collisionBox.getLayoutY()+speed);
-        }
-        else if((collisionBox.getLayoutY() - oldPos[1]) > 0)
-        {
-            collisionBox.setLayoutY(collisionBox.getLayoutY()-speed);
-        }
-        else if((collisionBox.getLayoutX()) - oldPos[0] < 0)
-        {
-            collisionBox.setLayoutX(collisionBox.getLayoutX()+speed);
-        }
-        else if(collisionBox.getLayoutX() - oldPos[0] > 0)
-        {
-            collisionBox.setLayoutX(collisionBox.getLayoutX()-speed);
-        }
-        else
-        {
-            collisionBox.setLayoutX(oldPos[0]);
-            collisionBox.setLayoutY(oldPos[1]);
-        }
+        collisionBox.setLayoutX(oldPos[0]);
+        collisionBox.setLayoutY(oldPos[1]);
     }
 
-    // Set player's sprite location to player's collision box location.
-    public void move()
+    // Stores the current location of the collision box for reference in pending collisions.
+    public void setLastLocation()
     {
         oldPos[0] = collisionBox.getLayoutX();
         oldPos[1] = collisionBox.getLayoutY();
+    }
+
+    // Set player's sprite location to player's collision box location.
+    public void moveSprite()
+    {
         sprite.setLayoutX( collisionBox.getLayoutX() - (sprite.getFitWidth()/2) + (collisionBox.getWidth()/2) );
         sprite.setLayoutY( collisionBox.getLayoutY() - sprite.getFitHeight() + (collisionBox.getHeight()+1) );
     }
 
     // Adds player elements to a pane in order to be displayed.
-    public void addToPane(Pane pane)
+    public void addToPane(Pane pane, int row, int col, int tileSize)
     {
+        setLayoutX(col*tileSize);
+        setLayoutY((row*tileSize));
+        sprite.setViewOrder(50);
         pane.getChildren().addAll(collisionBox, sprite);
     }
 
