@@ -52,7 +52,8 @@ public class Main extends Application
     {
         primaryStage.setTitle("OOP-MINI-PROJECT");
         LevelManager levelManager = new LevelManager(60, parseLevel("src/resources/level_info.txt"));
-        primaryStage = levelManager.getStage();
+        GameManager gameManager = new GameManager(levelManager);
+        primaryStage = gameManager.getStage();
         primaryStage.show();
     }
 
