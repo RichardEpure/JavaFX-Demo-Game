@@ -73,7 +73,6 @@ public class GameManager extends ViewManager
                     }
                     else
                     {
-                        player.setLastLocation();
                         playerMovement();
                         if(!isColliding())
                         {
@@ -110,6 +109,7 @@ public class GameManager extends ViewManager
     // Method that handles player movement and corresponding animations.
     private void playerMovement()
     {
+        player.setLastLocation();
         if(isLeftKeyPressed && !isRightKeyPressed)
         {
             player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()-player.getSpeed());
