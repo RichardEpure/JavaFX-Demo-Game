@@ -12,7 +12,6 @@ public class GameManager extends ViewManager
     private boolean isRightKeyPressed;
     private boolean isUpKeyPressed;
     private boolean isDownKeyPressed;
-    private boolean isAttackKeyPress;
 
     // If no dimension arguments provided for the constructor, set dimensions to default values (800x800).
     public GameManager(LevelManager levelManager)
@@ -33,20 +32,23 @@ public class GameManager extends ViewManager
         this.isRightKeyPressed = false;
         this.isUpKeyPressed = false;
         this.isDownKeyPressed = false;
-        this.isAttackKeyPress = false;
 
-        this.player = new Player();
-        this.player.addToPane(this.levelManager.getPane(), 2, 2, this.levelManager.getTileSize());
-        this.levelManager.addLifeForm(player);
-
-        LifeForm x = new LifeForm(25, 15, 3, 30, ANIMATIONS.PLAYER_DOWN_IDLE);
-        x.addToPane(this.levelManager.getPane(), 3, 2, this.levelManager.getTileSize());
-        this.levelManager.addLifeForm(x);
-
+        initialiseLifeForms();
         centerViewOnPlayer();
         createPaneResizeListeners();
         createKeyListeners();
         gameLoop();
+    }
+
+    private void initialiseLifeForms()
+    {
+        player = new Player();
+        player.addToPane(levelManager.getPane(), 2, 2, levelManager.getTileSize());
+        levelManager.addLifeForm(player);
+
+        LifeForm x = new LifeForm(25, 15, 3, 30, ANIMATIONS.PLAYER_DOWN_IDLE);
+        x.addToPane(levelManager.getPane(), 3, 2, levelManager.getTileSize());
+        levelManager.addLifeForm(x);
     }
 
     // Method that initiates a loop which cycles every frame.
@@ -75,7 +77,9 @@ public class GameManager extends ViewManager
                 if(timer1 >= (double)1/120)
                 {
                     checkAllCollisions();
-                    if(!isAttackKeyPress)
+                    checkAllAttacks();
+                    test();
+                    if(player.getState() == STATES.IDLE || player.getWeapon().getRange() > 0)
                     {
                         playerMovement();
                         if (!isPlayerColliding())
@@ -103,6 +107,17 @@ public class GameManager extends ViewManager
         return false;
     }
 
+    private void test()
+    {
+        for(int i=0; i<levelManager.getCollidableElements().size(); i++)
+        {
+            if(player.getCollisionBox().getBoundsInParent().intersects(player.getWeapon().getHitBox().getBoundsInParent()))
+            {
+                System.out.println("COLLIDE");
+            }
+        }
+    }
+
     // Handles the collisions of every "LifeForm" instance within a level.
     private void checkAllCollisions()
     {
@@ -115,6 +130,119 @@ public class GameManager extends ViewManager
                     levelManager.getLifeForms().get(i).collide();
                 }
             }
+        }
+    }
+
+    // Handles all combat between "LifeForm"s.
+    private void checkAllAttacks()
+    {
+        for(int i=0; i<levelManager.getLifeForms().size(); i++)
+        {
+            if(levelManager.getLifeForms().get(i).getState() == STATES.ATTACK)
+            {
+                LifeForm lifeForm = levelManager.getLifeForms().get(i);
+
+                // Checks if the hit box is in the scene, if it isn't, add it in.
+                if(!levelManager.getPane().getChildren().contains(lifeForm.getWeapon().getHitBox()))
+                {
+                    levelManager.getPane().getChildren().add(lifeForm.getWeapon().getHitBox());
+                }
+                // Checks what direction the attack is executed at and store it for future reference.
+                if(lifeForm.getWeapon().getDirection() == DIRECTIONS.UNDEFINED)
+                {
+                    lifeForm.getWeapon().setDirection(lifeForm.getDirection());
+                }
+                // Positions the initial location of the hit box.
+                if(lifeForm.getWeapon().getCounter() == 0)
+                {
+                    positionHitBox(lifeForm);
+                }
+                // Launch the attack in the appropriate direction.
+                if(lifeForm.getWeapon().getDistanceTravelled() < lifeForm.getWeapon().getRange() && lifeForm.getWeapon().getRange() > 0)
+                {
+                    switch(lifeForm.getWeapon().getDirection())
+                    {
+                        case NORTH:
+                            lifeForm.getWeapon().getHitBox().setLayoutY(lifeForm.getWeapon().getHitBox().getLayoutY() - lifeForm.getWeapon().getSpeed());
+                            break;
+                        case EAST:
+                            lifeForm.getWeapon().getHitBox().setLayoutX(lifeForm.getWeapon().getHitBox().getLayoutX() + lifeForm.getWeapon().getSpeed());
+                            break;
+                        case SOUTH:
+                            lifeForm.getWeapon().getHitBox().setLayoutY(lifeForm.getWeapon().getHitBox().getLayoutY() + lifeForm.getWeapon().getSpeed());
+                            break;
+                        case WEST:
+                            lifeForm.getWeapon().getHitBox().setLayoutX(lifeForm.getWeapon().getHitBox().getLayoutX() - lifeForm.getWeapon().getSpeed());
+                            break;
+                    }
+                    lifeForm.getWeapon().calculateDistance();
+                    lifeForm.getWeapon().incrementCounter();
+                }
+                else if(lifeForm.getWeapon().getRange() == 0 && lifeForm.getWeapon().getCounter() <= lifeForm.getWeapon().getDuration())
+                {
+                    lifeForm.getWeapon().incrementCounter();
+                }
+                else
+                {
+                    levelManager.getPane().getChildren().remove(lifeForm.getWeapon().getHitBox());
+                    lifeForm.getWeapon().resetDistance();
+                    lifeForm.getWeapon().setDirection(DIRECTIONS.UNDEFINED);
+                    lifeForm.getWeapon().resetCounter();
+                    lifeForm.setState(STATES.IDLE);
+                }
+            }
+        }
+    }
+
+    // Positions the initial location of the hit box.
+    private void positionHitBox(LifeForm lifeForm)
+    {
+        switch (lifeForm.getWeapon().getDirection())
+        {
+            case NORTH:
+                lifeForm.getWeapon().getHitBox().setLayoutY(
+                    lifeForm.getWeapon().getHitBox().getLayoutY() -
+                    lifeForm.getWeapon().getHitBox().getHeight()
+                );
+                lifeForm.getWeapon().getHitBox().setLayoutX(
+                    lifeForm.getWeapon().getHitBox().getLayoutX() -
+                    (lifeForm.getWeapon().getHitBox().getWidth()/2) +
+                    (lifeForm.getCollisionBox().getWidth()/2)
+                );
+                break;
+            case EAST:
+                lifeForm.getWeapon().getHitBox().setLayoutY(
+                    lifeForm.getWeapon().getHitBox().getLayoutY() +
+                    (lifeForm.getCollisionBox().getHeight()/2) -
+                    (lifeForm.getWeapon().getHitBox().getHeight()/2)
+                );
+                lifeForm.getWeapon().getHitBox().setLayoutX(
+                    lifeForm.getWeapon().getHitBox().getLayoutX() +
+                    lifeForm.getCollisionBox().getWidth()
+                );
+                break;
+            case SOUTH:
+                lifeForm.getWeapon().getHitBox().setLayoutY(
+                    lifeForm.getWeapon().getHitBox().getLayoutY() +
+                    lifeForm.getCollisionBox().getHeight()
+                );
+                lifeForm.getWeapon().getHitBox().setLayoutX(
+                    lifeForm.getWeapon().getHitBox().getLayoutX() -
+                    (lifeForm.getWeapon().getHitBox().getWidth()/2) +
+                    (lifeForm.getCollisionBox().getWidth()/2)
+                );
+                break;
+            case WEST:
+                lifeForm.getWeapon().getHitBox().setLayoutY(
+                    lifeForm.getWeapon().getHitBox().getLayoutY() +
+                    (lifeForm.getCollisionBox().getHeight()/2) -
+                    (lifeForm.getWeapon().getHitBox().getHeight()/2)
+                );
+                lifeForm.getWeapon().getHitBox().setLayoutX(
+                    lifeForm.getWeapon().getHitBox().getLayoutX() -
+                    lifeForm.getWeapon().getHitBox().getWidth()
+                );
+                break;
         }
     }
 
@@ -131,21 +259,25 @@ public class GameManager extends ViewManager
         player.setLastLocation();
         if(isLeftKeyPressed && !isRightKeyPressed)
         {
+            player.setDirection(DIRECTIONS.WEST);
             player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()-player.getSpeed());
             if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_LEFT_WALK) { player.setAnimation(ANIMATIONS.PLAYER_LEFT_WALK); }
         }
         if(isRightKeyPressed && !isLeftKeyPressed)
         {
+            player.setDirection(DIRECTIONS.EAST);
             player.getCollisionBox().setLayoutX(player.getCollisionBox().getLayoutX()+player.getSpeed());
             if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_RIGHT_WALK) { player.setAnimation(ANIMATIONS.PLAYER_RIGHT_WALK); }
         }
         if(isUpKeyPressed && !isDownKeyPressed)
         {
+            player.setDirection(DIRECTIONS.NORTH);
             player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()-player.getSpeed());
             if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_UP_WALK) { player.setAnimation(ANIMATIONS.PLAYER_UP_WALK); }
         }
         if(isDownKeyPressed && !isUpKeyPressed)
         {
+            player.setDirection(DIRECTIONS.SOUTH);
             player.getCollisionBox().setLayoutY(player.getCollisionBox().getLayoutY()+player.getSpeed());
             if(player.getCurrentAnimation() != ANIMATIONS.PLAYER_DOWN_WALK) { player.setAnimation(ANIMATIONS.PLAYER_DOWN_WALK); }
         }
@@ -155,34 +287,31 @@ public class GameManager extends ViewManager
             {
                 case PLAYER_LEFT_IDLE:
                 case PLAYER_LEFT_WALK:
+                    player.setDirection(DIRECTIONS.WEST);
                     player.setAnimation(ANIMATIONS.PLAYER_LEFT_IDLE);
                     break;
 
                 case PLAYER_RIGHT_IDLE:
                 case PLAYER_RIGHT_WALK:
+                    player.setDirection(DIRECTIONS.EAST);
                     player.setAnimation(ANIMATIONS.PLAYER_RIGHT_IDLE);
                     break;
 
                 case PLAYER_UP_IDLE:
                 case PLAYER_UP_WALK:
+                    player.setDirection(DIRECTIONS.NORTH);
                     player.setAnimation(ANIMATIONS.PLAYER_UP_IDLE);
                     break;
 
                 case PLAYER_DOWN_IDLE:
                 case PLAYER_DOWN_WALK:
                 default:
+                    player.setDirection(DIRECTIONS.SOUTH);
                     player.setAnimation(ANIMATIONS.PLAYER_DOWN_IDLE);
                     break;
             }
         }
         player.moveSprite();
-    }
-
-    // Handles player combat
-    private void playerAttack()
-    {
-        isAttackKeyPress = false;
-
     }
 
     // Keyboard input listeners.
@@ -209,7 +338,12 @@ public class GameManager extends ViewManager
                     break;
 
                 case SPACE:
-                    isAttackKeyPress = true;
+                    if(player.getState() != STATES.ATTACK)
+                    {
+                        player.getWeapon().getHitBox().setLayoutY(player.getCollisionBox().getLayoutY());
+                        player.getWeapon().getHitBox().setLayoutX(player.getCollisionBox().getLayoutX());
+                        player.setState(STATES.ATTACK);
+                    }
                     break;
 
                 case ESCAPE:

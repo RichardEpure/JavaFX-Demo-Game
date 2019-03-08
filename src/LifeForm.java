@@ -14,7 +14,8 @@ public class LifeForm
     private double speed;
     private int health;
     private STATES state;
-    protected WEAPONS weapon;
+    private DIRECTIONS direction;
+    protected Weapon weapon;
 
     public LifeForm(double colW, double colH, double speed, double spriteSize, ANIMATIONS animation)
     {
@@ -26,7 +27,8 @@ public class LifeForm
         this.speed = speed;
         this.health = 100;
         this.state = STATES.IDLE;
-        this.weapon = WEAPONS.UNARMED;
+        this.direction = DIRECTIONS.SOUTH;
+        this.weapon = new Weapon(6, 6, 2, 10);
         setSpriteSize(spriteSize);
         animationLoop();
     }
@@ -139,9 +141,29 @@ public class LifeForm
         return health;
     }
 
+    public STATES getState()
+    {
+        return state;
+    }
+
+    public void setState(STATES state)
+    {
+        this.state = state;
+    }
+
     // Returns the currently equipped weapon
-    public WEAPONS getWeapon()
+    public Weapon getWeapon()
     {
         return weapon;
+    }
+
+    public DIRECTIONS getDirection()
+    {
+        return direction;
+    }
+
+    public void setDirection(DIRECTIONS direction)
+    {
+        this.direction = direction;
     }
 }
