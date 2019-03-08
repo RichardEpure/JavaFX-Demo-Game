@@ -15,6 +15,7 @@ public class LevelManager
     private int columns;
     private int tileSize;
     private ArrayList<Rectangle> collidableElements;
+    private ArrayList<LifeForm> lifeForms;
     private ELEMENT[][] levelData;
 
     public LevelManager(int tileSize, ELEMENT[][] levelData)
@@ -24,6 +25,7 @@ public class LevelManager
         this.columns = levelData[0].length;
         this.tileSize = tileSize;
         this.collidableElements = new ArrayList<>();
+        this.lifeForms = new ArrayList<>();
         this.pane = new Pane();
         this.scene = new SubScene(pane, rows*tileSize, columns*tileSize);
 
@@ -52,6 +54,18 @@ public class LevelManager
     public void addSubSceneToPane(Pane pane)
     {
         pane.getChildren().add(scene);
+    }
+
+    // Adds an instance of a "LifeForm" to the array list.
+    public void addLifeForm(LifeForm lifeForm)
+    {
+        lifeForms.add(lifeForm);
+    }
+
+    // Returns all instances of "LifeForm"s within the level.
+    public ArrayList<LifeForm> getLifeForms()
+    {
+        return lifeForms;
     }
 
     // Returns a list of all elements with collision.
@@ -92,20 +106,15 @@ public class LevelManager
         if(element.isCollidable())
         {
             Rectangle collisionBox = new Rectangle(0,0, Color.RED);
+            int sizeFactor = 0;
             switch(element)
             {
                 case SOUTHWALL:
-                    int sizeFactor = 5;
+                    sizeFactor = 5;
+                default:
                     collisionBox.setLayoutY(((scene.getHeight()/rows)*row)+sizeFactor);
                     collisionBox.setLayoutX((scene.getWidth()/columns)*col);
                     collisionBox.setHeight((tileSize*span)-sizeFactor);
-                    collisionBox.setWidth(tileSize*span);
-                    break;
-
-                default:
-                    collisionBox.setLayoutY((scene.getHeight()/rows)*row);
-                    collisionBox.setLayoutX((scene.getWidth()/columns)*col);
-                    collisionBox.setHeight(tileSize*span);
                     collisionBox.setWidth(tileSize*span);
                     break;
             }

@@ -12,6 +12,7 @@ public class GameManager extends ViewManager
     private boolean isRightKeyPressed;
     private boolean isUpKeyPressed;
     private boolean isDownKeyPressed;
+    private boolean isAttackKeyPress;
 
     // If no dimension arguments provided for the constructor, set dimensions to default values (800x800).
     public GameManager(LevelManager levelManager)
@@ -32,9 +33,15 @@ public class GameManager extends ViewManager
         this.isRightKeyPressed = false;
         this.isUpKeyPressed = false;
         this.isDownKeyPressed = false;
+        this.isAttackKeyPress = false;
 
         this.player = new Player();
-        this.player.addToPane(levelManager.getPane(), 2, 2, levelManager.getTileSize());
+        this.player.addToPane(this.levelManager.getPane(), 2, 2, this.levelManager.getTileSize());
+        this.levelManager.addLifeForm(player);
+
+        LifeForm x = new LifeForm(25, 15, 3, 30, ANIMATIONS.PLAYER_DOWN_IDLE);
+        x.addToPane(this.levelManager.getPane(), 3, 2, this.levelManager.getTileSize());
+        this.levelManager.addLifeForm(x);
 
         centerViewOnPlayer();
         createPaneResizeListeners();
@@ -67,14 +74,11 @@ public class GameManager extends ViewManager
                 // Every 120th of a second, carry out player movement/collisions.
                 if(timer1 >= (double)1/120)
                 {
-                    if(isColliding())
-                    {
-                        player.collide();
-                    }
-                    else
+                    checkAllCollisions();
+                    if(!isAttackKeyPress)
                     {
                         playerMovement();
-                        if(!isColliding())
+                        if (!isPlayerColliding())
                         {
                             centerViewOnPlayer();
                         }
@@ -87,7 +91,7 @@ public class GameManager extends ViewManager
     }
 
     // Checks whether the playerColBox is about to collide with anything.
-    private boolean isColliding()
+    private boolean isPlayerColliding()
     {
         for(int i=0; i<levelManager.getCollidableElements().size(); i++)
         {
@@ -97,6 +101,21 @@ public class GameManager extends ViewManager
             }
         }
         return false;
+    }
+
+    // Handles the collisions of every "LifeForm" instance within a level.
+    private void checkAllCollisions()
+    {
+        for(int i=0; i<levelManager.getLifeForms().size(); i++)
+        {
+            for (int j = 0; j<levelManager.getCollidableElements().size(); j++)
+            {
+                if (levelManager.getLifeForms().get(i).getCollisionBox().getBoundsInParent().intersects(levelManager.getCollidableElements().get(j).getBoundsInParent()))
+                {
+                    levelManager.getLifeForms().get(i).collide();
+                }
+            }
+        }
     }
 
     // Makes the player always in view at the center of the pane.
@@ -159,6 +178,13 @@ public class GameManager extends ViewManager
         player.moveSprite();
     }
 
+    // Handles player combat
+    private void playerAttack()
+    {
+        isAttackKeyPress = false;
+
+    }
+
     // Keyboard input listeners.
     private void createKeyListeners()
     {
@@ -180,6 +206,10 @@ public class GameManager extends ViewManager
 
                 case DOWN:
                     isDownKeyPressed = true;
+                    break;
+
+                case SPACE:
+                    isAttackKeyPress = true;
                     break;
 
                 case ESCAPE:

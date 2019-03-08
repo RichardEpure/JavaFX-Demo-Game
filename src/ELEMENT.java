@@ -1,9 +1,9 @@
 public enum ELEMENT
 {
-    FLOOR("X", "resources/tiles/RockyFloor.png", false, 100),
-    NORTHWALL("V", "resources/tiles/RockyWall(Horizontal).png", true, 100),
-    SOUTHWALL("^", "resources/tiles/RockyWall(Horizontal-Hidden).png", true, 0),
-    SIDEWALL("|", "resources/tiles/RockyWall(Up).png", true, 0);
+    FLOOR("X", "resources/tiles/RockyFloor.png", false, 1),
+    NORTHWALL("V", "resources/tiles/RockyWall(Horizontal).png", true, 1),
+    SOUTHWALL("^", "resources/tiles/RockyWall(Horizontal-Hidden).png", true, -10000),
+    SIDEWALL("|", "resources/tiles/RockyWall(Up).png", true, -10000);
 
     private String symbol;
     private String image;
