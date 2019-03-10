@@ -2,10 +2,10 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Animator
+public abstract class Animator
 {
-    private ANIMATIONS currentAnimation;
-    private int currentFrame;
+    protected ANIMATIONS currentAnimation;
+    protected int currentFrame;
     protected ImageView sprite;
     protected AnimationTimer loop;
 
@@ -18,53 +18,20 @@ public class Animator
         animationLoop();
     }
 
-    private void animationLoop()
+    protected abstract void animationLoop();
+
+    // Cycles through all the frames of a given animation and goes back to the beginning once it reaches the end.
+    protected boolean nextFrame()
     {
-        loop = new AnimationTimer()
-        {
-            private long prevElapsedTime = 0;
-            private double timer1 = 0;
-            private ANIMATIONS animation;
-
-            @Override
-            public void handle(long elapsedTime)
-            {
-                // Calculates how much time has passed between frames.
-                if(prevElapsedTime == 0)
-                {
-                    prevElapsedTime = elapsedTime;
-                    return;
-                }
-                double deltaTime = (elapsedTime - prevElapsedTime) / 1.0e9;
-                prevElapsedTime = elapsedTime;
-                timer1 += deltaTime;
-
-                // Looped instructions
-                // Continuously cycle between animation frames at constant intervals.
-                if(timer1 >= 0.15)
-                {
-                    nextFrame();
-                    timer1=0;
-                }
-                // If the animation was changed, ignore timer and switch to new animation.
-                if(currentAnimation != animation)
-                {
-                    animation = currentAnimation;
-                    nextFrame();
-                }
-            }
-        };
-        loop.start();
-    }
-
-    private void nextFrame()
-    {
-        currentFrame++;
+        boolean endOfAnimation = false;
         if(currentFrame >= currentAnimation.getFrames().length)
         {
             currentFrame = 0;
+            endOfAnimation = true;
         }
         sprite.setImage(new Image(currentAnimation.getFrames()[currentFrame]));
+        currentFrame++;
+        return endOfAnimation;
     }
 
     // Sets the sprite width and calculates the new height in order to keep the image height/width ratio.
@@ -73,6 +40,12 @@ public class Animator
         double newHeight = (newWidth * sprite.getImage().getHeight()) / sprite.getImage().getWidth();
         sprite.setFitWidth(newWidth);
         sprite.setFitHeight(newHeight);
+    }
+
+    // Returns the sprite image
+    public ImageView getSprite()
+    {
+        return sprite;
     }
 
     // Sets the animation that will be displayed.

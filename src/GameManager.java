@@ -2,6 +2,9 @@ import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Rectangle;
+
+import java.awt.*;
 
 public class GameManager extends ViewManager
 {
@@ -46,7 +49,7 @@ public class GameManager extends ViewManager
         player.addToPane(levelManager.getPane(), 2, 2, levelManager.getTileSize());
         levelManager.addLifeForm(player);
 
-        LifeForm x = new LifeForm(25, 15, 3, 30, ANIMATIONS.PLAYER_DOWN_IDLE);
+        LifeForm x = new Player();
         x.addToPane(levelManager.getPane(), 3, 2, levelManager.getTileSize());
         levelManager.addLifeForm(x);
     }
@@ -79,7 +82,7 @@ public class GameManager extends ViewManager
                     checkAllCollisions();
                     executeAttacks();
                     checkHitBoxCollisions();
-                    if(player.getState() == STATES.IDLE || player.getWeapon().getRange() > 0)
+                    if(player.getState() == STATES.IDLE)
                     {
                         playerMovement();
                         if (!isPlayerColliding())
@@ -131,11 +134,17 @@ public class GameManager extends ViewManager
             for(int j=0; j<levelManager.getLifeForms().size(); j++)
             {
                 LifeForm lifeForm2 = levelManager.getLifeForms().get(j);
-                if(lifeForm1.getWeapon().getHitBox().getBoundsInParent().intersects(lifeForm2.getCollisionBox().getBoundsInParent()) && lifeForm1 != lifeForm2 && lifeForm1.getWeapon().isActive())
+                if(lifeForm1.getWeapon().getHitBox().getBoundsInParent().intersects(lifeForm2.getCollisionBox().getBoundsInParent()) && lifeForm1 != lifeForm2 && lifeForm1.getWeapon().isDamaging())
                 {
-                    lifeForm1.setState(STATES.IDLE);
                     levelManager.getPane().getChildren().remove(lifeForm1.getWeapon().getHitBox());
                     lifeForm1.getWeapon().reset();
+                    lifeForm2.decreaseHealth(lifeForm1.getWeapon().getDamage());
+                    if(lifeForm2.getHealth() <= 0)
+                    {
+                        levelManager.getPane().getChildren().remove(lifeForm2.getCollisionBox());
+                        levelManager.getPane().getChildren().remove(lifeForm2.getSprite());
+                        levelManager.getLifeForms().remove(lifeForm2);
+                    }
                 }
             }
         }
@@ -147,44 +156,44 @@ public class GameManager extends ViewManager
         for(int i=0; i<levelManager.getLifeForms().size(); i++)
         {
             LifeForm lifeForm = levelManager.getLifeForms().get(i);
-            if(lifeForm.getState() == STATES.ATTACK)
+            Weapon weapon = lifeForm.getWeapon();
+            Rectangle hitBox = weapon.getHitBox();
+            double speed = weapon.getSpeed();
+
+            if(weapon.isActive())
             {
-                // Checks if the hit box is in the scene, if it isn't, add it in.
-                if(!levelManager.getPane().getChildren().contains(lifeForm.getWeapon().getHitBox()))
+                // Checks if the hit box is in the scene, if it isn't, add it in after a delay.
+                if(!levelManager.getPane().getChildren().contains(hitBox) && weapon.getCounter() > weapon.getDelay())
                 {
-                    levelManager.getPane().getChildren().add(lifeForm.getWeapon().getHitBox());
+                    levelManager.getPane().getChildren().add(hitBox);
+                    weapon.setDamaging(true);
                 }
                 // Launch the attack in the appropriate direction.
-                if(lifeForm.getWeapon().getDistanceTravelled() < lifeForm.getWeapon().getRange() && lifeForm.getWeapon().getRange() > 0)
+                if(weapon.getDistanceTravelled() < weapon.getRange() && weapon.getRange() > 0)
                 {
-                    switch(lifeForm.getWeapon().getDirection())
+                    switch(weapon.getDirection())
                     {
                         case NORTH:
-                            lifeForm.getWeapon().getHitBox().setLayoutY(lifeForm.getWeapon().getHitBox().getLayoutY() - lifeForm.getWeapon().getSpeed());
+                            hitBox.setLayoutY(hitBox.getLayoutY() - speed);
                             break;
                         case EAST:
-                            lifeForm.getWeapon().getHitBox().setLayoutX(lifeForm.getWeapon().getHitBox().getLayoutX() + lifeForm.getWeapon().getSpeed());
+                            hitBox.setLayoutX(hitBox.getLayoutX() + speed);
                             break;
                         case SOUTH:
-                            lifeForm.getWeapon().getHitBox().setLayoutY(lifeForm.getWeapon().getHitBox().getLayoutY() + lifeForm.getWeapon().getSpeed());
+                            hitBox.setLayoutY(hitBox.getLayoutY() + speed);
                             break;
                         case WEST:
-                            lifeForm.getWeapon().getHitBox().setLayoutX(lifeForm.getWeapon().getHitBox().getLayoutX() - lifeForm.getWeapon().getSpeed());
+                            hitBox.setLayoutX(hitBox.getLayoutX() - speed);
                             break;
                     }
-                    lifeForm.getWeapon().calculateDistance();
-                    lifeForm.getWeapon().incrementCounter();
+                    weapon.calculateDistance();
                 }
-                else if(lifeForm.getWeapon().getRange() == 0 && lifeForm.getWeapon().getCounter() <= lifeForm.getWeapon().getDuration())
+                else if (weapon.getCounter() > weapon.getDuration() || weapon.getRange() != 0)
                 {
-                    lifeForm.getWeapon().incrementCounter();
+                    levelManager.getPane().getChildren().remove(hitBox);
+                    weapon.reset();
                 }
-                else
-                {
-                    lifeForm.setState(STATES.IDLE);
-                    levelManager.getPane().getChildren().remove(lifeForm.getWeapon().getHitBox());
-                    lifeForm.getWeapon().reset();
-                }
+                weapon.incrementCounter();
             }
         }
     }
@@ -272,7 +281,7 @@ public class GameManager extends ViewManager
                     break;
 
                 case SPACE:
-                    if(player.getState() != STATES.ATTACK)
+                    if(player.getState() != STATES.ATTACK && !player.getWeapon().isActive())
                     {
                         player.attack();
                     }
@@ -286,11 +295,11 @@ public class GameManager extends ViewManager
 
         scene.setOnKeyReleased((KeyEvent event) ->
         {
-            switch(event.getCode())
+            switch (event.getCode())
             {
                 case LEFT:
                     isLeftKeyPressed = false;
-                    if(!isDownKeyPressed && !isRightKeyPressed && !isUpKeyPressed)
+                    if (!isDownKeyPressed && !isRightKeyPressed && !isUpKeyPressed && player.getState() != STATES.ATTACK)
                     {
                         player.setAnimation(ANIMATIONS.PLAYER_LEFT_IDLE);
                     }
@@ -298,7 +307,7 @@ public class GameManager extends ViewManager
 
                 case RIGHT:
                     isRightKeyPressed = false;
-                    if(!isLeftKeyPressed && !isDownKeyPressed && !isUpKeyPressed)
+                    if (!isLeftKeyPressed && !isDownKeyPressed && !isUpKeyPressed && player.getState() != STATES.ATTACK)
                     {
                         player.setAnimation(ANIMATIONS.PLAYER_RIGHT_IDLE);
                     }
@@ -306,7 +315,7 @@ public class GameManager extends ViewManager
 
                 case UP:
                     isUpKeyPressed = false;
-                    if(!isDownKeyPressed && !isLeftKeyPressed && !isRightKeyPressed)
+                    if (!isDownKeyPressed && !isLeftKeyPressed && !isRightKeyPressed && player.getState() != STATES.ATTACK)
                     {
                         player.setAnimation(ANIMATIONS.PLAYER_UP_IDLE);
                     }
@@ -314,7 +323,7 @@ public class GameManager extends ViewManager
 
                 case DOWN:
                     isDownKeyPressed = false;
-                    if(!isLeftKeyPressed && !isRightKeyPressed && !isUpKeyPressed)
+                    if (!isLeftKeyPressed && !isRightKeyPressed && !isUpKeyPressed && player.getState() != STATES.ATTACK)
                     {
                         player.setAnimation(ANIMATIONS.PLAYER_DOWN_IDLE);
                     }

@@ -1,15 +1,16 @@
+import javafx.animation.AnimationTimer;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class LifeForm extends Animator
+public abstract class LifeForm extends Animator
 {
     private Rectangle collisionBox;
     private double[] oldPos;
     private double speed;
     private int health;
     private STATES state;
-    private DIRECTIONS direction;
+    protected DIRECTIONS direction;
     protected Weapon weapon;
 
     public LifeForm(double colW, double colH, double speed, double spriteSize, ANIMATIONS animation)
@@ -22,17 +23,68 @@ public class LifeForm extends Animator
         this.health = 100;
         this.state = STATES.IDLE;
         this.direction = DIRECTIONS.SOUTH;
-        this.weapon = new Weapon(6, 6, 2, 10);
+        this.weapon = new Weapon(6, 6, 2, 10, 5);
     }
+
+    protected void animationLoop()
+    {
+        loop = new AnimationTimer()
+        {
+            private long prevElapsedTime = 0;
+            private double timer1 = 0;
+            private ANIMATIONS animation;
+            private boolean endOfAnimation;
+
+            @Override
+            public void handle(long elapsedTime)
+            {
+                // Calculates how much time has passed between frames.
+                if(prevElapsedTime == 0)
+                {
+                    prevElapsedTime = elapsedTime;
+                    return;
+                }
+                double deltaTime = (elapsedTime - prevElapsedTime) / 1.0e9;
+                prevElapsedTime = elapsedTime;
+                timer1 += deltaTime;
+
+                // Looped instructions
+                // Continuously cycle between animation frames at constant intervals.
+                if(timer1 >= 0.05)
+                {
+                    endOfAnimation = nextFrame();
+                    if(endOfAnimation && state == STATES.ATTACK)
+                    {
+                        endAttackAnimation();
+                        state = STATES.IDLE;
+                    }
+                    timer1=0;
+                }
+                // If the animation was changed, ignore timer and switch to new animation.
+                if(currentAnimation != animation)
+                {
+                    animation = currentAnimation;
+                    currentFrame = 0;
+                    nextFrame();
+                }
+            }
+        };
+        loop.start();
+    }
+
+    protected abstract void endAttackAnimation();
+
+    protected abstract void startAttackAnimation();
 
     // Initiates an attack
     public void attack()
     {
         weapon.getHitBox().setLayoutY(collisionBox.getLayoutY());
         weapon.getHitBox().setLayoutX(collisionBox.getLayoutX());
+        startAttackAnimation();
         state = STATES.ATTACK;
-        weapon.setActive(true);
         positionHitBox();
+        weapon.setActive(true);
     }
 
     // Positions the initial location of the hit box.
@@ -151,16 +203,15 @@ public class LifeForm extends Animator
         return collisionBox;
     }
 
-    // Returns the movement speed value.
-    public double getSpeed()
-    {
-        return speed;
-    }
-
     // Returns how much health this "LifeForm" has.
     public int getHealth()
     {
         return health;
+    }
+
+    public void decreaseHealth(int damage)
+    {
+        this.health -= damage;
     }
 
     public STATES getState()
@@ -168,20 +219,10 @@ public class LifeForm extends Animator
         return state;
     }
 
-    public void setState(STATES state)
-    {
-        this.state = state;
-    }
-
     // Returns the currently equipped weapon
     public Weapon getWeapon()
     {
         return weapon;
-    }
-
-    public DIRECTIONS getDirection()
-    {
-        return direction;
     }
 
     public void setDirection(DIRECTIONS direction)
