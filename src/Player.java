@@ -3,7 +3,7 @@ public class Player extends LifeForm
     public Player()
     {
         super(40, 20, 10, 65, ANIMATIONS.PLAYER_DOWN_IDLE);
-        this.weapon = new Weapon(55, 55, 50, 16, 14);
+        this.weapon = new Weapon(80, 80, 0, 16, 14);
     }
 
     protected void endAttackAnimation()

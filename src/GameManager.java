@@ -123,6 +123,18 @@ public class GameManager extends ViewManager
         }
     }
 
+    // Checks if a single lifeForm has collided with any collidable elements.
+    private void checkSpecificCollision(LifeForm lifeForm)
+    {
+        for (int i = 0; i<levelManager.getCollidableElements().size(); i++)
+        {
+            if (lifeForm.getCollisionBox().getBoundsInParent().intersects(levelManager.getCollidableElements().get(i).getBoundsInParent()))
+            {
+                lifeForm.collide();
+            }
+        }
+    }
+
     // Checks if a hit box intersects with a lifeForm's collision box and carries out the appropriate actions.
     private void checkHitBoxCollisions()
     {
@@ -137,6 +149,7 @@ public class GameManager extends ViewManager
                     levelManager.getPane().getChildren().remove(lifeForm1.getWeapon().getHitBox());
                     lifeForm1.getWeapon().reset();
                     lifeForm2.decreaseHealth(lifeForm1.getWeapon().getDamage());
+                    knockBack(lifeForm1, lifeForm2, 0.25);
                     if(lifeForm2.getHealth() <= 0)
                     {
                         levelManager.getPane().getChildren().remove(lifeForm2.getCollisionBox());
@@ -146,6 +159,50 @@ public class GameManager extends ViewManager
                 }
             }
         }
+    }
+
+    // Knocks back a life form relative to the position of another life form.
+    public void knockBack(LifeForm lifeForm1, LifeForm lifeForm2, double force)
+    {
+        AnimationTimer loop = new AnimationTimer() {
+            private long prevElapsedTime = 0;
+            private double timer1 = 0;
+            private int counter = 0;
+            private double x = lifeForm2.getCollisionBox().getLayoutX() - lifeForm1.getCollisionBox().getLayoutX();
+            private double y = lifeForm2.getCollisionBox().getLayoutY() - lifeForm1.getCollisionBox().getLayoutY();
+            private double newX = x * force;
+            private double newY = y * force;
+
+            @Override
+            public void handle(long elapsedTime) {
+                // Calculates how much time has passed between frames.
+                if(prevElapsedTime == 0)
+                {
+                    prevElapsedTime = elapsedTime;
+                    return;
+                }
+                double deltaTime = (elapsedTime - prevElapsedTime) / 1.0e9;
+                prevElapsedTime = elapsedTime;
+                timer1 += deltaTime;
+
+                // Looped instructions
+                if(timer1 >= 0.01)
+                {
+                    lifeForm2.setLastLocation();
+                    lifeForm2.getCollisionBox().setLayoutX(lifeForm2.getCollisionBox().getLayoutX() + newX);
+                    lifeForm2.getCollisionBox().setLayoutY(lifeForm2.getCollisionBox().getLayoutY() + newY);
+                    checkSpecificCollision(lifeForm2);
+                    lifeForm2.moveSprite();
+                    counter++;
+                    timer1 = 0;
+                }
+                if(counter >= 4)
+                {
+                    this.stop();
+                }
+            }
+        };
+        loop.start();
     }
 
     // Handles all combat between "LifeForm"s.
@@ -279,7 +336,7 @@ public class GameManager extends ViewManager
                     break;
 
                 case SPACE:
-                    if(player.getState() != STATES.ATTACK && !player.getWeapon().isActive())
+                    if(player.getState() == STATES.IDLE && !player.getWeapon().isActive())
                     {
                         player.attack();
                     }
