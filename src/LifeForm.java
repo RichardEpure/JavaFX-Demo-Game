@@ -5,9 +5,9 @@ import javafx.scene.shape.Rectangle;
 
 public abstract class LifeForm extends Animator
 {
-    private Rectangle collisionBox;
+    protected Rectangle collisionBox;
     private double[] oldPos;
-    private double speed;
+    protected double speed;
     private int health;
     private STATES state;
     protected DIRECTIONS direction;
@@ -155,37 +155,14 @@ public abstract class LifeForm extends Animator
     }
 
     // Sets the sprite's location to the collision box's location.
-    private void moveSprite()
+    protected void moveSprite()
     {
         sprite.setLayoutX( collisionBox.getLayoutX() - (sprite.getFitWidth()/2) + (collisionBox.getWidth()/2) );
         sprite.setLayoutY( collisionBox.getLayoutY() - sprite.getFitHeight() + (collisionBox.getHeight()+1) );
     }
 
     // Moves the location of the collision box in the specified direction.
-    public void move(DIRECTIONS direction)
-    {
-        this.direction = direction;
-        switch(direction)
-        {
-            case NORTH:
-                collisionBox.setLayoutY(collisionBox.getLayoutY() - speed);
-                setAnimation(ANIMATIONS.PLAYER_UP_WALK);
-                break;
-            case EAST:
-                collisionBox.setLayoutX(collisionBox.getLayoutX() + speed);
-                setAnimation(ANIMATIONS.PLAYER_RIGHT_WALK);
-                break;
-            case SOUTH:
-                collisionBox.setLayoutY(collisionBox.getLayoutY() + speed);
-                setAnimation(ANIMATIONS.PLAYER_DOWN_WALK);
-                break;
-            case WEST:
-                collisionBox.setLayoutX(collisionBox.getLayoutX() - speed);
-                setAnimation(ANIMATIONS.PLAYER_LEFT_WALK);
-                break;
-        }
-        moveSprite();
-    }
+    public abstract void move(DIRECTIONS direction);
 
     // Adds the collisionBox and the sprite elements to a pane in order to be displayed.
     public void addToPane(Pane pane, int row, int col, int tileSize)

@@ -7,49 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/ANIMATIONS.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/ANIMATIONS.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/Animator$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/Animator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/Animator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/GameManager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/LifeForm$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/LifeForm$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/LifeForm.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/LifeForm.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/Player.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/Weapon.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOP-MINI/Weapon.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/down_idle/down_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/down_walk/down_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/down_walk/down_walk2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/left_idle/left_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/left_walk/left_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/left_walk/left_walk2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/right_idle/right_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/right_walk/right_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/right_walk/right_walk2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/up_idle/up_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/up_walk/up_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOP-MINI/resources/player/up_walk/up_walk2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ANIMATIONS.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ANIMATIONS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Animator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Animator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LifeForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LifeForm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Weapon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Weapon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/down_idle/down_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/down_walk/down_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/down_walk/down_walk2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/left_idle/left_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/left_walk/left_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/left_walk/left_walk2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/right_idle/right_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/right_walk/right_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/right_walk/right_walk2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/up_idle/up_stand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/up_walk/up_walk1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/player/up_walk/up_walk2.png" beforeDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -106,11 +65,11 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file pinned="false" current-in-tab="false">
+            <file pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/LifeForm.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="4781">
-                    <caret line="208" column="22" lean-forward="true" selection-start-line="208" selection-start-column="22" selection-end-line="208" selection-end-column="22" />
+                  <state relative-caret-position="457">
+                    <caret line="157" column="13" selection-start-line="157" selection-start-column="13" selection-end-line="157" selection-end-column="13" />
                     <folding>
                       <element signature="imports" expanded="true" />
                       <element signature="e#7267#7268#0" expanded="true" />
@@ -133,13 +92,13 @@
             <file pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/src/Player.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="184">
-                    <caret line="8" column="39" lean-forward="true" selection-start-line="8" selection-start-column="39" selection-end-line="8" selection-end-column="39" />
+                  <state relative-caret-position="1078">
+                    <caret line="69" column="8" selection-start-line="69" selection-start-column="8" selection-end-line="69" selection-end-column="8" />
                   </state>
                 </provider>
               </entry>
             </file>
-            <file pinned="false" current-in-tab="true">
+            <file pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/src/Weapon.java">
                 <provider selected="true" editor-type-id="text-editor">
                   <state relative-caret-position="429">
@@ -204,13 +163,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="23" />
-          <entry key="java" value="33784" />
+          <entry key="java" value="33813" />
           <entry key="txt" value="151" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="33784" />
+          <entry key="JAVA" value="33813" />
           <entry key="PLAIN_TEXT" value="174" />
         </counts>
       </usages-collector>
@@ -242,7 +201,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/GameManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="553">
+            <state relative-caret-position="-1790">
               <caret line="177" column="34" lean-forward="true" selection-start-line="177" selection-start-column="34" selection-end-line="177" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -331,11 +290,11 @@
         <option value="$PROJECT_DIR$/src/WEAPONS.java" />
         <option value="$PROJECT_DIR$/src/DIRECTIONS.java" />
         <option value="$PROJECT_DIR$/src/ANIMATIONS.java" />
-        <option value="$PROJECT_DIR$/src/LifeForm.java" />
         <option value="$PROJECT_DIR$/src/Animator.java" />
         <option value="$PROJECT_DIR$/src/GameManager.java" />
-        <option value="$PROJECT_DIR$/src/Player.java" />
         <option value="$PROJECT_DIR$/src/Weapon.java" />
+        <option value="$PROJECT_DIR$/src/Player.java" />
+        <option value="$PROJECT_DIR$/src/LifeForm.java" />
       </list>
     </option>
   </component>
@@ -407,7 +366,7 @@
     <property name="MemberChooser.sorted" value="false" />
     <property name="OverrideImplement.combined" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552237679883" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552238097615" />
     <property name="dynamic.classpath" value="false" />
     <property name="last_opened_file_path" value="C:/Program Files/Java/jdk1.8.0_201/lib" />
     <property name="project.structure.last.edited" value="Libraries" />
@@ -543,7 +502,7 @@
       <window_info anchor="bottom" id="Terminal" order="0" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.3295107" />
-      <window_info active="true" anchor="bottom" id="Run" order="3" visible="true" weight="0.10932722" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.10932722" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.3998471" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
@@ -554,7 +513,7 @@
       <window_info anchor="bottom" id="Changes" order="11" />
       <window_info anchor="bottom" id="Profiler" order="12" />
       <window_info anchor="bottom" id="Event Log" order="13" />
-      <window_info anchor="bottom" id="Messages" order="14" weight="0.32874617" />
+      <window_info active="true" anchor="bottom" id="Messages" order="14" visible="true" weight="0.32874617" />
       <window_info anchor="right" id="Palette&#9;" order="0" />
       <window_info anchor="right" id="Theme Preview" order="1" />
       <window_info anchor="right" id="Capture Analysis" order="2" />
@@ -682,28 +641,6 @@
     <entry file="file://$PROJECT_DIR$/src/resources/player/right_idle/tile044.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/LifeForm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4781">
-          <caret line="208" column="22" lean-forward="true" selection-start-line="208" selection-start-column="22" selection-end-line="208" selection-end-column="22" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#7267#7268#0" expanded="true" />
-            <element signature="e#7302#7303#0" expanded="true" />
-            <element signature="e#7493#7494#0" expanded="true" />
-            <element signature="e#7522#7523#0" expanded="true" />
-            <element signature="e#7253#7254#0" expanded="true" />
-            <element signature="e#7277#7278#0" expanded="true" />
-            <element signature="e#7263#7264#0" expanded="true" />
-            <element signature="e#7291#7292#0" expanded="true" />
-            <element signature="e#7748#7749#0" expanded="true" />
-            <element signature="e#7777#7778#0" expanded="true" />
-            <element signature="e#7911#7912#0" expanded="true" />
-            <element signature="e#7953#7954#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ANIMATIONS.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
@@ -726,13 +663,6 @@
             <element signature="e#1506#1507#0" expanded="true" />
             <element signature="e#1534#1535#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Player.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="8" column="39" lean-forward="true" selection-start-line="8" selection-start-column="39" selection-end-line="8" selection-end-column="39" />
         </state>
       </provider>
     </entry>
@@ -780,12 +710,41 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/GameManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="553">
+        <state relative-caret-position="-1790">
           <caret line="177" column="34" lean-forward="true" selection-start-line="177" selection-start-column="34" selection-end-line="177" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#589#590#0" expanded="true" />
             <element signature="e#633#634#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1078">
+          <caret line="69" column="8" selection-start-line="69" selection-start-column="8" selection-end-line="69" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/LifeForm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="457">
+          <caret line="157" column="13" selection-start-line="157" selection-start-column="13" selection-end-line="157" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7267#7268#0" expanded="true" />
+            <element signature="e#7302#7303#0" expanded="true" />
+            <element signature="e#7493#7494#0" expanded="true" />
+            <element signature="e#7522#7523#0" expanded="true" />
+            <element signature="e#7253#7254#0" expanded="true" />
+            <element signature="e#7277#7278#0" expanded="true" />
+            <element signature="e#7263#7264#0" expanded="true" />
+            <element signature="e#7291#7292#0" expanded="true" />
+            <element signature="e#7748#7749#0" expanded="true" />
+            <element signature="e#7777#7778#0" expanded="true" />
+            <element signature="e#7911#7912#0" expanded="true" />
+            <element signature="e#7953#7954#0" expanded="true" />
           </folding>
         </state>
       </provider>
