@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -48,10 +49,10 @@ public class Main extends Application
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception
+    public void start(Stage primaryStage)
     {
         primaryStage.setTitle("OOP-MINI-PROJECT");
-        LevelManager levelManager = new LevelManager(60, parseLevel("src/resources/level_info.txt"));
+        LevelManager levelManager = new LevelManager(100, parseLevel("src/resources/level_info.txt"), new Image[]{new Image("resources/tileMapFront.png"), new Image("resources/tileMapBack.png")});
         GameManager gameManager = new GameManager(levelManager);
         primaryStage = gameManager.getStage();
         primaryStage.show();

@@ -2,7 +2,7 @@ public class Player extends LifeForm
 {
     public Player()
     {
-        super(40, 20, 3, 40, ANIMATIONS.PLAYER_DOWN_IDLE);
+        super(40, 20, 10, 65, ANIMATIONS.PLAYER_DOWN_IDLE);
         this.weapon = new Weapon(55, 55, 50, 16, 14);
     }
 

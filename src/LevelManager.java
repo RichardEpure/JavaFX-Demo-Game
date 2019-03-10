@@ -17,8 +17,10 @@ public class LevelManager
     private ArrayList<Rectangle> collidableElements;
     private ArrayList<LifeForm> lifeForms;
     private ELEMENT[][] levelData;
+    private ImageView tileMapFront;
+    private ImageView tileMapBack;
 
-    public LevelManager(int tileSize, ELEMENT[][] levelData)
+    public LevelManager(int tileSize, ELEMENT[][] levelData, Image[] mapImages)
     {
         this.levelData = levelData;
         this.rows = levelData.length;
@@ -28,6 +30,15 @@ public class LevelManager
         this.lifeForms = new ArrayList<>();
         this.pane = new Pane();
         this.scene = new SubScene(pane, rows*tileSize, columns*tileSize);
+        this.tileMapFront = new ImageView(mapImages[0]);
+        tileMapFront.setViewOrder(-10000);
+        tileMapFront.setFitWidth(scene.getWidth());
+        tileMapFront.setFitHeight(scene.getHeight());
+        this.tileMapBack = new ImageView(mapImages[1]);
+        tileMapBack.setViewOrder(1);
+        tileMapBack.setFitWidth(scene.getWidth());
+        tileMapBack.setFitHeight(scene.getHeight());
+        this.pane.getChildren().addAll(tileMapFront, tileMapBack);
 
         constructLevel();
     }
@@ -97,12 +108,6 @@ public class LevelManager
 
     private void addElement(ELEMENT element, int row, int col, int span)
     {
-        ImageView image = new ImageView(new Image(element.getImage()));
-        image.setLayoutY((scene.getHeight()/rows)*row);
-        image.setLayoutX((scene.getWidth()/columns)*col);
-        image.setFitHeight(tileSize*span);
-        image.setFitWidth(tileSize*span);
-        image.setViewOrder(element.getViewOrder());
         if(element.isCollidable())
         {
             Rectangle collisionBox = new Rectangle(0,0, Color.RED);
@@ -110,7 +115,7 @@ public class LevelManager
             switch(element)
             {
                 case SOUTHWALL:
-                    sizeFactor = 5;
+                    sizeFactor = 20;
                 default:
                     collisionBox.setLayoutY(((scene.getHeight()/rows)*row)+sizeFactor);
                     collisionBox.setLayoutX((scene.getWidth()/columns)*col);
@@ -122,6 +127,5 @@ public class LevelManager
             collidableElements.add(collisionBox);
             pane.getChildren().add(collisionBox);
         }
-        pane.getChildren().addAll(image);
     }
 }

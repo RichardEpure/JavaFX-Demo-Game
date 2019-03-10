@@ -4,8 +4,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Rectangle;
 
-import java.awt.*;
-
 public class GameManager extends ViewManager
 {
     private LevelManager levelManager;
@@ -46,11 +44,11 @@ public class GameManager extends ViewManager
     private void initialiseLifeForms()
     {
         player = new Player();
-        player.addToPane(levelManager.getPane(), 2, 2, levelManager.getTileSize());
+        player.addToPane(levelManager.getPane(), 6, 6, levelManager.getTileSize());
         levelManager.addLifeForm(player);
 
         LifeForm x = new Player();
-        x.addToPane(levelManager.getPane(), 3, 2, levelManager.getTileSize());
+        x.addToPane(levelManager.getPane(), 9, 9, levelManager.getTileSize());
         levelManager.addLifeForm(x);
     }
 
