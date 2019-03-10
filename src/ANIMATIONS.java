@@ -10,24 +10,14 @@ public enum ANIMATIONS
     PLAYER_UP_WALK(new String[]{"resources/player/up_walk/up_walk1.png", "resources/player/up_walk/up_walk2.png"});
 
     private String[] animation;
-    private int index;
-    private int lastIndex;
 
     ANIMATIONS(String[] animation)
     {
         this.animation = animation;
-        this.index = -1;
-        this.lastIndex = animation.length-1;
     }
 
-    public String cycleFrame()
+    public String[] getFrames()
     {
-        index++;
-        String imageToReturn = animation[index];
-        if(index==lastIndex)
-        {
-            index=-1;
-        }
-        return imageToReturn;
+        return animation;
     }
 }

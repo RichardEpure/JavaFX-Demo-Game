@@ -1,16 +1,11 @@
-import javafx.animation.AnimationTimer;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class LifeForm
+public class LifeForm extends Animator
 {
     private Rectangle collisionBox;
     private double[] oldPos;
-    private ImageView sprite;
-    private ANIMATIONS currentAnimation;
     private double speed;
     private int health;
     private STATES state;
@@ -19,69 +14,78 @@ public class LifeForm
 
     public LifeForm(double colW, double colH, double speed, double spriteSize, ANIMATIONS animation)
     {
+        super(spriteSize, animation);
         this.collisionBox = new Rectangle(colW, colH, Color.RED);
         this.collisionBox.setVisible(false);
         this.oldPos = new double[2];
-        this.currentAnimation = animation;
-        this.sprite = new ImageView(new Image(currentAnimation.cycleFrame()));
         this.speed = speed;
         this.health = 100;
         this.state = STATES.IDLE;
         this.direction = DIRECTIONS.SOUTH;
         this.weapon = new Weapon(6, 6, 2, 10);
-        setSpriteSize(spriteSize);
-        animationLoop();
     }
 
-    private void animationLoop()
+    // Initiates an attack
+    public void attack()
     {
-        AnimationTimer loop = new AnimationTimer()
+        weapon.getHitBox().setLayoutY(collisionBox.getLayoutY());
+        weapon.getHitBox().setLayoutX(collisionBox.getLayoutX());
+        state = STATES.ATTACK;
+        weapon.setActive(true);
+        positionHitBox();
+    }
+
+    // Positions the initial location of the hit box.
+    private void positionHitBox()
+    {
+        weapon.setDirection(direction);
+        switch (weapon.getDirection())
         {
-            private long prevElapsedTime = 0;
-            private double timer1 = 0;
-            private ANIMATIONS animation;
-
-            @Override
-            public void handle(long elapsedTime)
-            {
-                // Calculates how much time has passed between frames.
-                if(prevElapsedTime == 0)
-                {
-                    prevElapsedTime = elapsedTime;
-                    return;
-                }
-                double deltaTime = (elapsedTime - prevElapsedTime) / 1.0e9;
-                prevElapsedTime = elapsedTime;
-                timer1 += deltaTime;
-
-                // Looped instructions
-                // Continuously cycle between animation frames at constant intervals.
-                if(timer1 >= 0.15)
-                {
-                    sprite.setImage(new Image(animation.cycleFrame()));
-                    timer1=0;
-                }
-                // If player animation was changed, ignore timer and switch to new animation.
-                if(currentAnimation != animation)
-                {
-                    animation = currentAnimation;
-                    sprite.setImage(new Image(animation.cycleFrame()));
-                }
-            }
-        };
-        loop.start();
-    }
-
-    // Sets which animation set the player will display.
-    public void setAnimation(ANIMATIONS animation)
-    {
-        this.currentAnimation = animation;
-    }
-
-    // Returns the animation that is currently being displayed.
-    public ANIMATIONS getCurrentAnimation()
-    {
-        return currentAnimation;
+            case NORTH:
+                weapon.getHitBox().setLayoutY(
+                    weapon.getHitBox().getLayoutY() -
+                    weapon.getHitBox().getHeight()
+                );
+                weapon.getHitBox().setLayoutX(
+                    weapon.getHitBox().getLayoutX() -
+                    (weapon.getHitBox().getWidth()/2) +
+                    (collisionBox.getWidth()/2)
+                );
+                break;
+            case EAST:
+                weapon.getHitBox().setLayoutY(
+                    weapon.getHitBox().getLayoutY() +
+                    (collisionBox.getHeight()/2) -
+                    (weapon.getHitBox().getHeight()/2)
+                );
+                weapon.getHitBox().setLayoutX(
+                    weapon.getHitBox().getLayoutX() +
+                    collisionBox.getWidth()
+                );
+                break;
+            case SOUTH:
+                weapon.getHitBox().setLayoutY(
+                    weapon.getHitBox().getLayoutY() +
+                    collisionBox.getHeight()
+                );
+                weapon.getHitBox().setLayoutX(
+                    weapon.getHitBox().getLayoutX() -
+                    (weapon.getHitBox().getWidth()/2) +
+                    (collisionBox.getWidth()/2)
+                );
+                break;
+            case WEST:
+                weapon.getHitBox().setLayoutY(
+                    weapon.getHitBox().getLayoutY() +
+                    (collisionBox.getHeight()/2) -
+                    (weapon.getHitBox().getHeight()/2)
+                );
+                weapon.getHitBox().setLayoutX(
+                    weapon.getHitBox().getLayoutX() -
+                    weapon.getHitBox().getWidth()
+                );
+                break;
+        }
     }
 
     // Move collision box to its position before any collision occurred.
@@ -99,10 +103,36 @@ public class LifeForm
     }
 
     // Sets the sprite's location to the collision box's location.
-    public void moveSprite()
+    private void moveSprite()
     {
         sprite.setLayoutX( collisionBox.getLayoutX() - (sprite.getFitWidth()/2) + (collisionBox.getWidth()/2) );
         sprite.setLayoutY( collisionBox.getLayoutY() - sprite.getFitHeight() + (collisionBox.getHeight()+1) );
+    }
+
+    // Moves the location of the collision box in the specified direction.
+    public void move(DIRECTIONS direction)
+    {
+        this.direction = direction;
+        switch(direction)
+        {
+            case NORTH:
+                collisionBox.setLayoutY(collisionBox.getLayoutY() - speed);
+                setAnimation(ANIMATIONS.PLAYER_UP_WALK);
+                break;
+            case EAST:
+                collisionBox.setLayoutX(collisionBox.getLayoutX() + speed);
+                setAnimation(ANIMATIONS.PLAYER_RIGHT_WALK);
+                break;
+            case SOUTH:
+                collisionBox.setLayoutY(collisionBox.getLayoutY() + speed);
+                setAnimation(ANIMATIONS.PLAYER_DOWN_WALK);
+                break;
+            case WEST:
+                collisionBox.setLayoutX(collisionBox.getLayoutX() - speed);
+                setAnimation(ANIMATIONS.PLAYER_LEFT_WALK);
+                break;
+        }
+        moveSprite();
     }
 
     // Adds the collisionBox and the sprite elements to a pane in order to be displayed.
@@ -113,14 +143,6 @@ public class LifeForm
         moveSprite();
         sprite.viewOrderProperty().bind(sprite.layoutYProperty().multiply(-1));
         pane.getChildren().addAll(collisionBox, sprite);
-    }
-
-    // Sets the sprite width and calculates the new height in order to keep the image height/width ratio.
-    private void setSpriteSize(double newWidth)
-    {
-        double newHeight = (newWidth * sprite.getImage().getHeight()) / sprite.getImage().getWidth();
-        sprite.setFitWidth(newWidth);
-        sprite.setFitHeight(newHeight);
     }
 
     // Returns the collision box.

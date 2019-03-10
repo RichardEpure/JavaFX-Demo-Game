@@ -11,6 +11,7 @@ public class Weapon
     private DIRECTIONS direction;
     private int duration;
     private int counter;
+    private boolean active;
 
     public Weapon(double hitW, double hitH, int damage, int duration)
     {
@@ -28,6 +29,7 @@ public class Weapon
         this.direction = DIRECTIONS.UNDEFINED;
         this.duration = 0;
         this.counter = 0;
+        this.active = false;
     }
 
     public Rectangle getHitBox()
@@ -93,5 +95,23 @@ public class Weapon
     public void resetCounter()
     {
         counter = 0;
+    }
+
+    public void setActive(boolean active)
+    {
+        this.active = active;
+    }
+
+    public boolean isActive()
+    {
+        return active;
+    }
+
+    public void reset()
+    {
+        setActive(false);
+        resetDistance();
+        setDirection(DIRECTIONS.UNDEFINED);
+        resetCounter();
     }
 }
