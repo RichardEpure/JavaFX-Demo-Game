@@ -115,7 +115,7 @@ public class LevelManager
             switch(element)
             {
                 case SOUTHWALL:
-                    sizeFactor = 20;
+                    sizeFactor = 60;
                 default:
                     collisionBox.setLayoutY(((scene.getHeight()/rows)*row)+sizeFactor);
                     collisionBox.setLayoutX((scene.getWidth()/columns)*col);

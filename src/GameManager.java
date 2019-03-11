@@ -4,6 +4,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+
 public class GameManager extends ViewManager
 {
     private LevelManager levelManager;
@@ -47,9 +49,13 @@ public class GameManager extends ViewManager
         player.addToPane(levelManager.getPane(), 6, 6, levelManager.getTileSize());
         levelManager.addLifeForm(player);
 
-        LifeForm x = new Player();
-        x.addToPane(levelManager.getPane(), 9, 9, levelManager.getTileSize());
+        Human x = new Human();
+        x.addToPane(levelManager.getPane(), 15, 10, levelManager.getTileSize());
         levelManager.addLifeForm(x);
+
+        Human y = new Human();
+        y.addToPane(levelManager.getPane(), 20, 15, levelManager.getTileSize());
+        levelManager.addLifeForm(y);
     }
 
     // Method that initiates a loop which cycles every frame.
@@ -80,13 +86,14 @@ public class GameManager extends ViewManager
                     checkAllCollisions();
                     executeAttacks();
                     checkHitBoxCollisions();
+                    enemyMovement();
                     if(player.getState() == STATES.IDLE)
                     {
                         playerMovement();
-                        if (!isPlayerColliding())
-                        {
-                            centerViewOnPlayer();
-                        }
+                    }
+                    if (!isPlayerColliding())
+                    {
+                        centerViewOnPlayer();
                     }
                     timer1=0;
                 }
@@ -138,6 +145,7 @@ public class GameManager extends ViewManager
     // Checks if a hit box intersects with a lifeForm's collision box and carries out the appropriate actions.
     private void checkHitBoxCollisions()
     {
+        ArrayList<LifeForm> successfulHitters = new ArrayList<>();
         for(int i=0; i<levelManager.getLifeForms().size(); i++)
         {
             LifeForm lifeForm1 = levelManager.getLifeForms().get(i);
@@ -146,22 +154,31 @@ public class GameManager extends ViewManager
                 LifeForm lifeForm2 = levelManager.getLifeForms().get(j);
                 if(lifeForm1.getWeapon().getHitBox().getBoundsInParent().intersects(lifeForm2.getCollisionBox().getBoundsInParent()) && lifeForm1 != lifeForm2 && lifeForm1.getWeapon().isDamaging())
                 {
-                    levelManager.getPane().getChildren().remove(lifeForm1.getWeapon().getHitBox());
-                    lifeForm1.getWeapon().reset();
+                    successfulHitters.add(lifeForm1);
                     lifeForm2.decreaseHealth(lifeForm1.getWeapon().getDamage());
-                    knockBack(lifeForm1, lifeForm2, 0.25);
+                    knockBack(lifeForm1, lifeForm2, 20);
                     if(lifeForm2.getHealth() <= 0)
                     {
-                        levelManager.getPane().getChildren().remove(lifeForm2.getCollisionBox());
-                        levelManager.getPane().getChildren().remove(lifeForm2.getSprite());
+                        levelManager.getPane().getChildren().removeAll(lifeForm2.getCollisionBox(), lifeForm2.getSprite());
+                        if(lifeForm2 instanceof Enemy)
+                        {
+                            levelManager.getPane().getChildren().removeAll(((Enemy) lifeForm2).getDetectionRadius(), ((Enemy) lifeForm2).getAttackRange());
+                        }
                         levelManager.getLifeForms().remove(lifeForm2);
                     }
                 }
             }
         }
+        for(int i=0; i<successfulHitters.size(); i++)
+        {
+            LifeForm lifeForm = successfulHitters.get(i);
+            levelManager.getPane().getChildren().remove(lifeForm.getWeapon().getHitBox());
+            lifeForm.getWeapon().reset();
+        }
     }
 
     // Knocks back a life form relative to the position of another life form.
+    // lifeForm 2 receives the impulse from lifeForm 1.
     public void knockBack(LifeForm lifeForm1, LifeForm lifeForm2, double force)
     {
         AnimationTimer loop = new AnimationTimer() {
@@ -169,9 +186,10 @@ public class GameManager extends ViewManager
             private double timer1 = 0;
             private int counter = 0;
             private double x = lifeForm2.getCollisionBox().getLayoutX() - lifeForm1.getCollisionBox().getLayoutX();
-            private double y = lifeForm2.getCollisionBox().getLayoutY() - lifeForm1.getCollisionBox().getLayoutY();
-            private double newX = x * force;
-            private double newY = y * force;
+            private double y = lifeForm1.getCollisionBox().getLayoutY() - lifeForm2.getCollisionBox().getLayoutY();
+            private double theta = Math.atan(y/x);
+            private double xForce = Math.signum(x) * force * Math.cos(theta);
+            private double yForce = Math.signum(x) * force * Math.sin(theta);
 
             @Override
             public void handle(long elapsedTime) {
@@ -189,10 +207,10 @@ public class GameManager extends ViewManager
                 if(timer1 >= 0.01)
                 {
                     lifeForm2.setLastLocation();
-                    lifeForm2.getCollisionBox().setLayoutX(lifeForm2.getCollisionBox().getLayoutX() + newX);
-                    lifeForm2.getCollisionBox().setLayoutY(lifeForm2.getCollisionBox().getLayoutY() + newY);
+                    lifeForm2.getCollisionBox().setLayoutX(lifeForm2.getCollisionBox().getLayoutX() + xForce);
+                    lifeForm2.getCollisionBox().setLayoutY(lifeForm2.getCollisionBox().getLayoutY() - yForce);
                     checkSpecificCollision(lifeForm2);
-                    lifeForm2.moveSprite();
+                    lifeForm2.updatePosition();
                     counter++;
                     timer1 = 0;
                 }
@@ -249,6 +267,37 @@ public class GameManager extends ViewManager
                     weapon.reset();
                 }
                 weapon.incrementCounter();
+            }
+        }
+    }
+
+    private void enemyMovement()
+    {
+        for(int i=0; i<levelManager.getLifeForms().size(); i++)
+        {
+            LifeForm lifeForm = levelManager.getLifeForms().get(i);
+            if(lifeForm instanceof Enemy)
+            {
+                Enemy enemy = (Enemy)lifeForm;
+                if(enemy.getAttackRange().getBoundsInParent().intersects(player.getCollisionBox().getBoundsInParent()))
+                {
+                    System.out.println("enemy attack");
+                    enemy.attack();
+                }
+
+                if(!enemy.getDetectionRadius().getBoundsInParent().intersects(player.getCollisionBox().getBoundsInParent()) && enemy.getState() == STATES.CHASING)
+                {
+                    enemy.idle();
+                }
+
+                if(enemy.getDetectionRadius().getBoundsInParent().intersects(player.getCollisionBox().getBoundsInParent()) && (enemy.getState() == STATES.IDLE || enemy.getState() == STATES.WANDERING))
+                {
+                    enemy.chase(player);
+                }
+                else if(enemy.getState() == STATES.IDLE)
+                {
+                    enemy.wander();
+                }
             }
         }
     }

@@ -9,21 +9,21 @@ public abstract class LifeForm extends Animator
     private double[] oldPos;
     protected double speed;
     private int health;
-    private STATES state;
+    protected STATES state;
     protected DIRECTIONS direction;
     protected Weapon weapon;
 
-    public LifeForm(double colW, double colH, double speed, double spriteSize, ANIMATIONS animation)
+    public LifeForm(double colW, double colH, double spriteSize, ANIMATIONS animation, Weapon weapon)
     {
         super(spriteSize, animation);
         this.collisionBox = new Rectangle(colW, colH, Color.RED);
         this.collisionBox.setVisible(false);
         this.oldPos = new double[2];
-        this.speed = speed;
+        this.speed = 5;
         this.health = 100;
         this.state = STATES.IDLE;
         this.direction = DIRECTIONS.SOUTH;
-        this.weapon = new Weapon(6, 6, 2, 10, 5);
+        this.weapon = weapon;
     }
 
     protected void animationLoop()
@@ -55,8 +55,7 @@ public abstract class LifeForm extends Animator
                     endOfAnimation = nextFrame();
                     if(endOfAnimation && state == STATES.ATTACK)
                     {
-                        endAttackAnimation();
-                        state = STATES.IDLE;
+                        idle();
                     }
                     timer1=0;
                 }
@@ -72,7 +71,7 @@ public abstract class LifeForm extends Animator
         loop.start();
     }
 
-    protected abstract void endAttackAnimation();
+    protected abstract void idle();
 
     protected abstract void startAttackAnimation();
 
@@ -88,7 +87,7 @@ public abstract class LifeForm extends Animator
     }
 
     // Positions the initial location of the hit box.
-    private void positionHitBox()
+    protected void positionHitBox()
     {
         weapon.setDirection(direction);
         switch (weapon.getDirection())
@@ -155,21 +154,18 @@ public abstract class LifeForm extends Animator
     }
 
     // Sets the sprite's location to the collision box's location.
-    protected void moveSprite()
+    protected void updatePosition()
     {
         sprite.setLayoutX( collisionBox.getLayoutX() - (sprite.getFitWidth()/2) + (collisionBox.getWidth()/2) );
         sprite.setLayoutY( collisionBox.getLayoutY() - sprite.getFitHeight() + (collisionBox.getHeight()+1) );
     }
-
-    // Moves the location of the collision box in the specified direction.
-    public abstract void move(DIRECTIONS direction);
 
     // Adds the collisionBox and the sprite elements to a pane in order to be displayed.
     public void addToPane(Pane pane, int row, int col, int tileSize)
     {
         collisionBox.setLayoutX(col*tileSize);
         collisionBox.setLayoutY((row*tileSize));
-        moveSprite();
+        updatePosition();
         sprite.viewOrderProperty().bind(sprite.layoutYProperty().multiply(-1));
         pane.getChildren().addAll(collisionBox, sprite);
     }

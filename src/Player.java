@@ -2,12 +2,13 @@ public class Player extends LifeForm
 {
     public Player()
     {
-        super(40, 20, 10, 65, ANIMATIONS.PLAYER_DOWN_IDLE);
-        this.weapon = new Weapon(80, 80, 0, 16, 14);
+        super(40, 20, 65, ANIMATIONS.PLAYER_DOWN_IDLE, new Weapon(80, 80, 25, 16, 14));
+        this.speed = 10;
     }
 
-    protected void endAttackAnimation()
+    protected void idle()
     {
+        state = STATES.IDLE;
         switch(direction)
         {
             case NORTH:
@@ -67,6 +68,6 @@ public class Player extends LifeForm
                 setAnimation(ANIMATIONS.PLAYER_LEFT_WALK);
                 break;
         }
-        moveSprite();
+        updatePosition();
     }
 }

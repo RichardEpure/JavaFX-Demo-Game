@@ -1,5 +1,7 @@
 public enum STATES
 {
     IDLE,
-    ATTACK
+    ATTACK,
+    WANDERING,
+    CHASING
 }
