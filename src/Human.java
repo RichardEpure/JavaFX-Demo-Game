@@ -6,6 +6,7 @@ public class Human extends Enemy
         this.speed = 1.5;
     }
 
+    @Override
     protected void updateMovementAnimation()
     {
         switch(this.direction)
@@ -25,6 +26,7 @@ public class Human extends Enemy
         }
     }
 
+    @Override
     protected void idle()
     {
         state = STATES.IDLE;
@@ -45,6 +47,7 @@ public class Human extends Enemy
         }
     }
 
+    @Override
     protected void startAttackAnimation()
     {
         switch(direction)

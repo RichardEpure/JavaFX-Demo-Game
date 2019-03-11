@@ -179,7 +179,7 @@ public class GameManager extends ViewManager
 
     // Knocks back a life form relative to the position of another life form.
     // lifeForm 2 receives the impulse from lifeForm 1.
-    public void knockBack(LifeForm lifeForm1, LifeForm lifeForm2, double force)
+    private void knockBack(LifeForm lifeForm1, LifeForm lifeForm2, double force)
     {
         AnimationTimer loop = new AnimationTimer() {
             private long prevElapsedTime = 0;

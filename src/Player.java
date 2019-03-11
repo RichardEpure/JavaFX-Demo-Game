@@ -6,6 +6,7 @@ public class Player extends LifeForm
         this.speed = 10;
     }
 
+    @Override
     protected void idle()
     {
         state = STATES.IDLE;
@@ -26,6 +27,7 @@ public class Player extends LifeForm
         }
     }
 
+    @Override
     protected void startAttackAnimation()
     {
         switch(direction)
