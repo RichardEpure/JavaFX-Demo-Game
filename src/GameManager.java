@@ -152,7 +152,8 @@ public class GameManager extends ViewManager
             for(int j=0; j<levelManager.getLifeForms().size(); j++)
             {
                 LifeForm lifeForm2 = levelManager.getLifeForms().get(j);
-                if(lifeForm1.getWeapon().getHitBox().getBoundsInParent().intersects(lifeForm2.getCollisionBox().getBoundsInParent()) && lifeForm1 != lifeForm2 && lifeForm1.getWeapon().isDamaging())
+                if(lifeForm1.getWeapon().getHitBox().getBoundsInParent().intersects(lifeForm2.getCollisionBox().getBoundsInParent())
+                        && lifeForm1 != lifeForm2 && lifeForm1.getWeapon().isDamaging() && !lifeForm1.getClass().getName().equals(lifeForm2.getClass().getName()))
                 {
                     successfulHitters.add(lifeForm1);
                     lifeForm2.decreaseHealth(lifeForm1.getWeapon().getDamage());
