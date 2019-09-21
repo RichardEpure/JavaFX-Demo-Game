@@ -2,4 +2,4 @@ out/*
 .idea/*
 *.zip
 *.iml
-META-INF/*
+META-INF
