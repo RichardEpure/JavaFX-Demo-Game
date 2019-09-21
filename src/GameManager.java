@@ -282,15 +282,12 @@ public class GameManager extends ViewManager
                 Enemy enemy = (Enemy)lifeForm;
                 if(enemy.getAttackRange().getBoundsInParent().intersects(player.getCollisionBox().getBoundsInParent()))
                 {
-                    System.out.println("enemy attack");
                     enemy.attack();
                 }
-
                 if(!enemy.getDetectionRadius().getBoundsInParent().intersects(player.getCollisionBox().getBoundsInParent()) && enemy.getState() == STATES.CHASING)
                 {
                     enemy.idle();
                 }
-
                 if(enemy.getDetectionRadius().getBoundsInParent().intersects(player.getCollisionBox().getBoundsInParent()) && (enemy.getState() == STATES.IDLE || enemy.getState() == STATES.WANDERING))
                 {
                     enemy.chase(player);
